@@ -1,0 +1,4 @@
+rootProject.name = 'MGAP2'
+include 'MGAP2-Core'
+include 'MGAP2-MultiWorld'
+
