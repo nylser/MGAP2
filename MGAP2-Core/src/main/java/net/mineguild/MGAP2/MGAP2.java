@@ -2,9 +2,7 @@ package net.mineguild.MGAP2;
 
 import static org.spongepowered.api.util.command.args.GenericArguments.*;
 
-import com.flowpowered.math.imaginary.Quaterniond;
 import com.flowpowered.math.vector.Vector3d;
-import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import net.mineguild.MGAP2.MultiWorld.MultiWorld;
 import net.mineguild.MGAP2.commands.LoginMessage;
@@ -17,14 +15,16 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.property.block.PassableProperty;
 import org.spongepowered.api.effect.sound.SoundTypes;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.Subscribe;
-import org.spongepowered.api.event.state.InitializationEvent;
-import org.spongepowered.api.event.state.PreInitializationEvent;
-import org.spongepowered.api.event.state.ServerStartingEvent;
-import org.spongepowered.api.event.state.ServerStoppingEvent;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.config.DefaultConfig;
@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Plugin(id = "MGAP2-Core", name = "MineguildAdminPlugin2-Core", version = "0.1")
 public class MGAP2 implements MGAPModule {
@@ -75,9 +76,9 @@ public class MGAP2 implements MGAPModule {
         }
     }
 
-    @Subscribe
-    public void preinit(PreInitializationEvent event) {
-        if(defaultConfig.exists()) {
+    @Listener
+    public void preinit(GamePreInitializationEvent event) {
+        if (defaultConfig.exists()) {
             try {
                 rootNode = configManager.load();
             } catch (IOException e) {
@@ -90,10 +91,10 @@ public class MGAP2 implements MGAPModule {
         teleportConfig = new TeleportConfig(rootNode.getNode("teleports").setComment("Teleport options"), this);
     }
 
-    @Subscribe
-    public void init(InitializationEvent event) {
+    @Listener
+    public void init(GameInitializationEvent event) {
 
-        getGame().getEventManager().register(this, new PlayerEventHandler(this));
+        getGame().getEventManager().registerListeners(this, new PlayerEventHandler(this));
 
         // Create login message commands
         LoginMessage lms = new LoginMessage(this, game);
@@ -128,7 +129,6 @@ public class MGAP2 implements MGAPModule {
         }).build();
 
 
-
         // Register commands
         event.getGame().getCommandDispatcher().register(this, loginMessage, "lms");
         event.getGame().getCommandDispatcher().register(this, mv_create, "mv_create");
@@ -142,15 +142,15 @@ public class MGAP2 implements MGAPModule {
 
     }
 
-    @Subscribe
-    public void onStarting(ServerStartingEvent event) {
+    @Listener
+    public void onStarting(GameStartingServerEvent event) {
 
     }
 
-    @Subscribe
-    public void onStopping(ServerStoppingEvent event) {
+    @Listener
+    public void onStopping(GameStoppingServerEvent event) {
         try {
-            if(!defaultConfig.getParentFile().exists()){
+            if (!defaultConfig.getParentFile().exists()) {
                 defaultConfig.getParentFile().mkdirs();
             }
             configManager.save(rootNode);
@@ -161,15 +161,12 @@ public class MGAP2 implements MGAPModule {
     }
 
     public void teleportToLook(Player entity) {
-        final Vector3d rotation = entity.getRotation(); //TODO Change when data API is done
-        final Vector3d direction = Quaterniond.fromAxesAnglesDeg(rotation.getX(), -rotation.getY(), rotation.getZ()).getDirection();
-        final Location location = entity.getLocation();
-        Vector3d position = location.getPosition().add(0, 1.62, 0);
-        BlockRay.BlockRayBuilder b = BlockRay.from(location.getExtent(), position).direction(direction);
-        Optional<BlockRayHit> block = b.filter(BlockRay.ONLY_AIR_FILTER, BlockRay.maxDistanceFilter(position, 200)).end();
+        Optional<BlockRayHit<World>> block = BlockRay.from(entity).end();
         if (block.isPresent()) {
-            Location blockLocation = block.get().getLocation();
-            if (blockLocation.add(0, 1, 0).getBlockType().isSolidCube()) {
+            Location<World> blockLocation = block.get().getLocation();
+            BlockState blockState = blockLocation.getBlock();
+            //Optional<PassableProperty> prop = blockState.getProperty(PassableProperty.class);
+            if (blockLocation.add(0, 1, 0).getBlockType().getProperty(PassableProperty.class).get().getValue()) {
                 blockLocation = blockLocation.add(0, 2, 0);
                 while (blockLocation.getBlockType() != BlockTypes.AIR) {
                     blockLocation = blockLocation.add(0, 1, 0);
@@ -231,7 +228,7 @@ public class MGAP2 implements MGAPModule {
         return teleportConfig;
     }
 
-    public static MGAP2 getInstance(){
+    public static MGAP2 getInstance() {
         return instance;
     }
 

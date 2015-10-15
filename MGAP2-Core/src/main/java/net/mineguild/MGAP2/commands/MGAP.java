@@ -1,6 +1,5 @@
 package net.mineguild.MGAP2.commands;
 
-import com.google.common.base.Optional;
 import net.mineguild.MGAP2.MGAP2;
 import net.mineguild.MGAP2.MGAPModule;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -17,6 +16,7 @@ import org.spongepowered.api.util.command.spec.CommandSpec;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class MGAP {
 

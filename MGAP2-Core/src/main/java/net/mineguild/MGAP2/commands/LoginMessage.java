@@ -1,13 +1,12 @@
 package net.mineguild.MGAP2.commands;
 
-import com.google.common.base.Optional;
 import net.mineguild.MGAP2.MGAP2;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.item.PagedData;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Item;
-import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
@@ -19,6 +18,8 @@ import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
 import org.spongepowered.api.util.command.args.CommandContext;
 import org.spongepowered.api.util.command.spec.CommandExecutor;
+
+import java.util.Optional;
 
 public class LoginMessage {
 
@@ -76,13 +77,13 @@ public class LoginMessage {
                 src.sendMessage(Texts.of(TextColors.RED, "Changing with book not implemented yet."));
                 try {
                     ItemStack book = game.getRegistry().createItemBuilder().itemType(ItemTypes.WRITABLE_BOOK).quantity(1).build();
-                    PagedData data = book.getOrCreate(PagedData.class).or(plugin.getGame().getRegistry().createBuilderOfType(PagedData.class).get());
+                    PagedData data = book.getOrCreate(PagedData.class).orElse(plugin.getGame().getRegistry().createBuilderOfType(PagedData.class).get());
                     data.pages().add(Texts.of(plugin.loginMessage.getString()));
                     book.offer(data);
                     book.offer(Keys.DISPLAY_NAME, Texts.of("Login message"));
                     Player p = (Player) src;
-                    Item item = (Item) p.getWorld().createEntity(EntityTypes.DROPPED_ITEM, p.getLocation().getPosition()).get();
-                    item.offer(item.getItemData().item().set(book));
+                    Item item = (Item) p.getWorld().createEntity(EntityTypes.ITEM, p.getLocation().getPosition()).get();
+                    item.offer(item.getItemData().item().set(book.createSnapshot()));
                     //p.getWorld().spawnEntity(item);
                     p.getInventory().offer(book);
                 } catch (Exception e) {

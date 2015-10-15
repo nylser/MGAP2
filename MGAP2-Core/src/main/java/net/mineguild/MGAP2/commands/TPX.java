@@ -2,20 +2,17 @@ package net.mineguild.MGAP2.commands;
 
 import static org.spongepowered.api.util.command.args.GenericArguments.*;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import net.mineguild.MGAP2.MGAP2;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.util.Consumer;
 import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
@@ -28,6 +25,9 @@ import org.spongepowered.api.world.storage.WorldProperties;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class TPX {
 
@@ -53,7 +53,7 @@ public class TPX {
             if (plugin.getTeleportConfig().isPlaySound()) {
                 Collection<Entity> players = world.getEntities(new Predicate<Entity>() {
                     @Override
-                    public boolean apply(Entity input) {
+                    public boolean test(Entity input) {
                         if (input instanceof Player) {
                             if (input.getLocation().getPosition().distance(player.getLocation().getPosition()) < plugin.getTeleportConfig().getPlayDistance()) {
                                 return true;
@@ -149,7 +149,7 @@ public class TPX {
             if(worldOptional.isPresent()){
                 players = worldOptional.get().getEntities(new Predicate<Entity>() {
                     @Override
-                    public boolean apply(Entity input) {
+                    public boolean test(Entity input) {
                         return input instanceof Player;
                     }
                 }).size();
