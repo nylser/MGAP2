@@ -161,11 +161,12 @@ public class MGAP2 implements MGAPModule {
     }
 
     public void teleportToLook(Player entity) {
-        Optional<BlockRayHit<World>> block = BlockRay.from(entity).end();
+        Optional<BlockRayHit<World>> block = BlockRay.from(entity).filter(BlockRay.onlyAirFilter(),
+                BlockRay.maxDistanceFilter(entity.getLocation().getPosition(), 200d)).end();
         if (block.isPresent()) {
             Location<World> blockLocation = block.get().getLocation();
             BlockState blockState = blockLocation.getBlock();
-            //Optional<PassableProperty> prop = blockState.getProperty(PassableProperty.class);
+            Optional<PassableProperty> prop = blockState.getProperty(PassableProperty.class);
             if (blockLocation.add(0, 1, 0).getBlockType().getProperty(PassableProperty.class).get().getValue()) {
                 blockLocation = blockLocation.add(0, 2, 0);
                 while (blockLocation.getBlockType() != BlockTypes.AIR) {
