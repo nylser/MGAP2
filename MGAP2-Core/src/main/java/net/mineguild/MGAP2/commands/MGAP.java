@@ -54,7 +54,7 @@ public class MGAP {
                 if (module.isPresent()) {
                     module.get().reloadConfig();
                 } else {
-                    for(MGAPModule mod : selections.values()){
+                    for (MGAPModule mod : selections.values()) {
                         mod.reloadConfig();
                     }
                 }

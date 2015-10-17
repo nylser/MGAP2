@@ -6,15 +6,14 @@ import org.spongepowered.api.util.command.CommandSource;
 
 public class CommandUtils {
 
-    public static boolean checkPlayer(CommandSource src){
-        if(!(src instanceof Player)){
+    public static boolean checkPlayer(CommandSource src) {
+        if (!(src instanceof Player)) {
             src.sendMessage(Texts.of("This command can only be used as player!"));
             return false;
         } else {
             return true;
         }
     }
-
 
 
 }

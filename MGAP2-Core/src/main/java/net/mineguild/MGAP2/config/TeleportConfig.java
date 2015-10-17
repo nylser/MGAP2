@@ -20,19 +20,19 @@ public class TeleportConfig {
     }
 
     public void loadConfig() {
-        if(soundNode.isVirtual()){
+        if (soundNode.isVirtual()) {
             soundNode.setValue(true);
             soundNode.setComment("Defines whether a sound is played on teleport.");
         }
-        if(distanceNode.isVirtual()){
+        if (distanceNode.isVirtual()) {
             distanceNode.setValue(10d);
             distanceNode.setComment("Distance of players that hear the sound.");
         }
-        if(volumeNode.isVirtual()){
+        if (volumeNode.isVirtual()) {
             volumeNode.setValue(0.6d);
             volumeNode.setComment("Defines the volume the sound is played at. (0.0-2.0)");
         }
-        if(volumeNode.getDouble() < 0 || volumeNode.getDouble() > 2.0){
+        if (volumeNode.getDouble() < 0 || volumeNode.getDouble() > 2.0) {
             plugin.getLogger().warn("volumeNode's value is too high  ({}), resetting to default.", volumeNode.getDouble());
             volumeNode.setValue(0.6d);
         }
@@ -49,7 +49,6 @@ public class TeleportConfig {
     public double getPlayVolume() {
         return volumeNode.getDouble();
     }
-
 
 
 }

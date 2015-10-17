@@ -1,10 +1,7 @@
 package net.mineguild.MGAP2;
 
-import static org.spongepowered.api.util.command.args.GenericArguments.*;
-
 import com.flowpowered.math.vector.Vector3d;
 import com.google.inject.Inject;
-import net.mineguild.MGAP2.MultiWorld.MultiWorld;
 import net.mineguild.MGAP2.commands.LoginMessage;
 import net.mineguild.MGAP2.commands.MGAP;
 import net.mineguild.MGAP2.commands.TPX;
@@ -46,13 +43,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.spongepowered.api.util.command.args.GenericArguments.*;
+
 @Plugin(id = "MGAP2-Core", name = "MineguildAdminPlugin2-Core", version = "0.1")
 public class MGAP2 implements MGAPModule {
 
-    @Inject
-    private PluginContainer container;
+    private static MGAP2 instance;
     public CommentedConfigurationNode loginMessage;
     CommentedConfigurationNode rootNode;
+    @Inject
+    private PluginContainer container;
     @Inject
     private Game game;
     @Inject
@@ -66,14 +66,20 @@ public class MGAP2 implements MGAPModule {
     private Map<String, MGAPModule> submodules = new HashMap<String, MGAPModule>();
     private TeleportConfig teleportConfig;
 
-    private static MGAP2 instance;
-
     public MGAP2() {
         if (instance == null) {
             instance = this;
         } else {
             throw new RuntimeException("Supposed to be Singleton");
         }
+    }
+
+    public static Logger getLogger() {
+        return getInstance().logger;
+    }
+
+    public static MGAP2 getInstance() {
+        return instance;
     }
 
     @Listener
@@ -186,7 +192,7 @@ public class MGAP2 implements MGAPModule {
     }
 
     public void registerSubmodule(MGAPModule plugin) {
-        if (plugin instanceof MultiWorld) {
+        if (plugin.getName().equals("MultiWorld")) {
             submodules.put("MultiWorld", plugin);
         }
     }
@@ -213,12 +219,13 @@ public class MGAP2 implements MGAPModule {
         }
     }
 
-    public Map<String, MGAPModule> getModules() {
-        return Collections.unmodifiableMap(submodules);
+    @Override
+    public String getName() {
+        return "Core";
     }
 
-    public static Logger getLogger() {
-        return getInstance().logger;
+    public Map<String, MGAPModule> getModules() {
+        return Collections.unmodifiableMap(submodules);
     }
 
     public Game getGame() {
@@ -227,10 +234,6 @@ public class MGAP2 implements MGAPModule {
 
     public TeleportConfig getTeleportConfig() {
         return teleportConfig;
-    }
-
-    public static MGAP2 getInstance() {
-        return instance;
     }
 
 }

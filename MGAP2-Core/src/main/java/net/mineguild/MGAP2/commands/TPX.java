@@ -1,7 +1,5 @@
 package net.mineguild.MGAP2.commands;
 
-import static org.spongepowered.api.util.command.args.GenericArguments.*;
-
 import net.mineguild.MGAP2.MGAP2;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.effect.sound.SoundTypes;
@@ -28,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import static org.spongepowered.api.util.command.args.GenericArguments.*;
 
 public class TPX {
 
@@ -146,7 +146,7 @@ public class TPX {
             })).build();
             Optional<World> worldOptional = plugin.getGame().getServer().getWorld(worldProperties.getUniqueId());
             int players = 0;
-            if(worldOptional.isPresent()){
+            if (worldOptional.isPresent()) {
                 players = worldOptional.get().getEntities(new Predicate<Entity>() {
                     @Override
                     public boolean test(Entity input) {

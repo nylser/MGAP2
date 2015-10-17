@@ -11,7 +11,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.Optional;
 
-@Plugin(id="MGAP2-MultiWorld", name = "MineguildAdminPlugin2-MultiWorld", version = "0.1", dependencies = "required-after:MGAP2-Core")
+@Plugin(id = "MGAP2-MultiWorld", name = "MineguildAdminPlugin2-MultiWorld", version = "0.1", dependencies = "required-after:MGAP2-Core")
 public class MultiWorld implements MGAPModule {
 
     private MGAP2 core;
@@ -23,13 +23,13 @@ public class MultiWorld implements MGAPModule {
     private PluginContainer container;
 
     @Listener
-    public void onPreinit(GamePreInitializationEvent event){
+    public void onPreinit(GamePreInitializationEvent event) {
         Optional<PluginContainer> coreContainer = event.getGame().getPluginManager().getPlugin("MGAP2-Core");
-        if(coreContainer.isPresent()){
+        if (coreContainer.isPresent()) {
             this.core = (MGAP2) coreContainer.get().getInstance();
             core.registerSubmodule(this);
             String message = "No kills today!";
-            logger.info("Sending message: '"+message+"'");
+            logger.info("Sending message: '" + message + "'");
             core.interlink(message, this);
         } else {
             throw new RuntimeException("MGAP2 not found!");
@@ -38,16 +38,21 @@ public class MultiWorld implements MGAPModule {
 
     @Override
     public void interlink(String message, MGAPModule plugin) {
-        logger.info("Got message back: '"+message+"'");
+        logger.info("Got message back: '" + message + "'");
     }
 
     @Override
-    public PluginContainer getContainer(){
+    public PluginContainer getContainer() {
         return container;
     }
 
     @Override
     public void reloadConfig() {
 
+    }
+
+    @Override
+    public String getName() {
+        return "MultiWorld";
     }
 }

@@ -56,18 +56,18 @@ public class Teleport {
         CommandSpec listRequestRequester = CommandSpec.builder().permission(tpaRequest.permission).description(Texts.of("Lists teleport requests you made and are active")).executor(new CommandExecutor() {
             @Override
             public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-                if(CommandUtils.checkPlayer(src)){
+                if (CommandUtils.checkPlayer(src)) {
                     final Player requester = (Player) src;
                     List<Text> texts = new ArrayList<Text>();
-                    for(Map.Entry<Player, List<TeleportRequest>> entry : tpaWait.entrySet()){
-                        for(TeleportRequest req : entry.getValue()){
-                            if(req.getRequester() == requester){
+                    for (Map.Entry<Player, List<TeleportRequest>> entry : tpaWait.entrySet()) {
+                        for (TeleportRequest req : entry.getValue()) {
+                            if (req.getRequester() == requester) {
                                 Text message = Texts.of(TextColors.AQUA, "Request to teleport to ", req.getAcceptor().getName(), " ", req.getCancel());
                                 texts.add(message);
                             }
                         }
                     }
-                    if(texts.size() > 0){
+                    if (texts.size() > 0) {
                         PaginationService paginationService = plugin.getGame().getServiceManager().provide(PaginationService.class).get();
                         paginationService.builder().title(Texts.of(TextColors.GOLD, "Teleport requests")).contents(texts).sendTo(src);
                     }
@@ -209,7 +209,7 @@ public class Teleport {
             return Texts.of(TextColors.RED, "[Cancel]").builder().onClick(TextActions.executeCallback(new Consumer<CommandSource>() {
                 @Override
                 public void accept(CommandSource value) {
-                    if(value.equals(requester)){
+                    if (value.equals(requester)) {
                         tpaRequest.processCancel(here);
                     }
                 }
